@@ -14,8 +14,8 @@ https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend
     -->
 
     <!--Key von Marcel: AIzaSyAMFXi-dJABzbMlmUc7ZwffoEn0WBst-Mo-->
-    <!--Key von Dennis: AIzaSyAMFXi-dJABzbMlmUc7ZwffoEn0WBst-Mo-->
+    <!--Key von Dennis: AIzaSyCQDeziypPb-q-Z89XpLXI5bhnkBJSAXqE-->
     <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
-        AIzaSyAMFXi-dJABzbMlmUc7ZwffoEn0WBst-Mo
+        AIzaSyCQDeziypPb-q-Z89XpLXI5bhnkBJSAXqE
     </string>
 </resources>
