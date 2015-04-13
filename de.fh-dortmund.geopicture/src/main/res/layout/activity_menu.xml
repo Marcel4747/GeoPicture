@@ -10,4 +10,16 @@
         android:layout_height="wrap_content"
         android:text="@string/MapButton"
         android:id="@+id/buttonStartMap" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/DennisButton"
+        android:id="@+id/buttonStartDennis" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/MarcelButton"
+        android:id="@+id/buttonStartMarcel" />
 </LinearLayout>

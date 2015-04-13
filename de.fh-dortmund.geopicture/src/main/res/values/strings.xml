@@ -3,4 +3,8 @@
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_menu">Menü</string>
     <string name="MapButton">Start Map</string>
+
+    <string name="title_activity_Test">Test</string>
+    <string name="DennisButton">Start Dennis Page</string>
+    <string name="MarcelButton">Start Marcel Page</string>
 </resources>

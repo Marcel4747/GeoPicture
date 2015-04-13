@@ -9,9 +9,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-/**
- * Created by Dennis on 13.04.2015.
- */
+
 public class MenuActivity extends Activity {
 
     @Override
@@ -24,6 +22,24 @@ public class MenuActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button buttonDennis =  (Button)findViewById(R.id.buttonStartDennis);
+        buttonDennis.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getApplicationContext(), DennisActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button buttonMarcel =  (Button)findViewById(R.id.buttonStartMarcel);
+        buttonMarcel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getApplicationContext(), MarcelActivity.class);
                 startActivity(intent);
             }
         });
