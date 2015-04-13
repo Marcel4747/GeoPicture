@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GeoPicture.iml" filepath="$PROJECT_DIR$/GeoPicture.iml" />
+      <module fileurl="file://$PROJECT_DIR$/de.fh-dortmund.geopicture/de.fh-dortmund.geopicture.iml" filepath="$PROJECT_DIR$/de.fh-dortmund.geopicture/de.fh-dortmund.geopicture.iml" />
     </modules>
   </component>
 </project>
