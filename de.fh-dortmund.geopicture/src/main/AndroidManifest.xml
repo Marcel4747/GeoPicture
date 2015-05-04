@@ -6,6 +6,14 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="de.do1900.permission.USE_REST_SERVICE" />
+
+
+
     <!--
  The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but are recommended.
@@ -36,6 +44,10 @@
         <activity
             android:name=".MarcelActivity"
             android:label="@string/title_activity_Test" >
+            <intent-filter>
+                <action android:name="de.do1900.plugin" />
+                <category android:name="de.do1900.plugin.fotocontrolplugin" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".MenuActivity"
