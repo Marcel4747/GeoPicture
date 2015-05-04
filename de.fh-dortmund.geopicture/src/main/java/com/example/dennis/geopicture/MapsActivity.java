@@ -1,16 +1,22 @@
 package com.example.dennis.geopicture;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.location.*;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -62,6 +68,14 @@ public class MapsActivity extends FragmentActivity {
             public void onProviderDisabled(String provider) {}
         };
 
+        Button showImage =  (Button)findViewById(R.id.button);
+        showImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 // Register the listener with the Location Manager to receive location updates
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
@@ -109,5 +123,15 @@ public class MapsActivity extends FragmentActivity {
      */
     private void setUpMap() {
        // mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(51.5138273, 7.4671297))
+                .zoom(13)
+                .build();
+
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setZoomGesturesEnabled(true);
+
     }
 }

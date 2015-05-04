@@ -45,3 +45,7 @@ public class MenuActivity extends Activity {
         });
     }
 }
+
+//        e:
+//        cd "E:\Programme\Android\SDK\platform-tools"
+//        adb install "E:\Programme\Android\SDK\platform-tools\Do1900Client.apk"
