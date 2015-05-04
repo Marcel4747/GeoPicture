@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.location.*;
+import android.media.Image;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.example.dennis.classes.Checkpoint;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,16 +24,26 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-
+    private List<Checkpoint> checkpoints;
+    private List<Marker> marker;
+    private int checkpointNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
+
+        checkpoints = new ArrayList<Checkpoint>();
+        checkpoints.add(new Checkpoint(new LatLng(51.514568, 7.465091)));
+        checkpointNumber = 0;
+        marker=new ArrayList<Marker>();
 
 //        LatLng point1 = new LatLng(51.514568, 7.465091);
 //        Marker pos1 = mMap.addMarker(new MarkerOptions()
@@ -54,21 +67,45 @@ public class MapsActivity extends FragmentActivity {
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
-                LatLng p=new LatLng(location.getLatitude(),location.getLongitude());
-                mMap.addMarker(new MarkerOptions()
-                        .position(p)
-                        .title("neuer Marker")
-                        .snippet("blablabalbalbala"));
+
+                LatLng target = checkpoints.get(checkpointNumber).getPosition();
+                LatLng pos = new LatLng(location.getLatitude(), location.getLongitude());
+                float[] results = new float[3];
+
+                Location.distanceBetween(target.latitude, target.longitude, pos.latitude, pos.longitude, results);
+
+                if (results[0] <= 50) {
+                    //Checkpoint checked!
+                    marker.add(mMap.addMarker(new MarkerOptions()
+                            .position(target)
+                            .title("Checkpoint " + (checkpointNumber+1))
+                            .snippet("blablabalbalbala")));
+                    if (marker.size() > 1) {
+                        Polyline line = mMap.addPolyline(new PolylineOptions()
+                                .add(marker.get(marker.size()-2).getPosition(), marker.get(marker.size()-1).getPosition())
+                                .width(5)
+                                .color(Color.RED));
+                    }
+                    checkpointNumber++;
+                }
+
+//                mMap.addMarker(new MarkerOptions()
+//                        .position(p)
+//                        .title("neuer Marker")
+//                        .snippet("blablabalbalbala"));
             }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
 
-            public void onProviderEnabled(String provider) {}
+            public void onProviderEnabled(String provider) {
+            }
 
-            public void onProviderDisabled(String provider) {}
+            public void onProviderDisabled(String provider) {
+            }
         };
 
-        Button showImage =  (Button)findViewById(R.id.button);
+        Button showImage = (Button) findViewById(R.id.button);
         showImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,7 +159,7 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-       // mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        // mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(51.5138273, 7.4671297))
