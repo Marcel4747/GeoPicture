@@ -2,11 +2,13 @@ package com.example.dennis.geopicture;
 
 import android.app.Activity;
 import android.app.Service;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
 import de.do1900.android.utils.BitmapCache;
+import de.do1900.android.utils.ImageReceiver;
 import de.do1900.android.views.ImageReceivingView;
 import de.do1900.persistence.data.ImageInformation;
 import de.do1900.persistence.data.Location;
@@ -16,7 +18,7 @@ import de.do1900.rest.service.ServiceStateInterface;
 
 public class MarcelActivity extends Activity implements ServiceStateInterface, ServiceResponseInterface {
 
-    ImageReceivingView bild;
+    ImageView bild;
 
     private APIServiceConnection serviceConnection = new APIServiceConnection(
             this);
@@ -29,7 +31,7 @@ public class MarcelActivity extends Activity implements ServiceStateInterface, S
         setContentView(R.layout.activity_marcel);
         Location location;
 
-        bild = (ImageReceivingView) findViewById(R.id.bild);
+        bild = (ImageView) findViewById(R.id.bild);
     }
 
     @Override
@@ -65,9 +67,14 @@ public class MarcelActivity extends Activity implements ServiceStateInterface, S
             Log.d("Test:", item.getName());
         }
 
-        ImageInformation i = lo[0].getImageInformation().get(1);
+        ImageInformation i = lo[0].getImageInformation().get(0);
         bitmapCache = BitmapCache.instance(this);
-        bitmapCache.setImage(bild, i, serviceConnection, 2);
+        bitmapCache.setImage(new ImageReceiver() {
+            @Override
+            public void setImageBitmap(Bitmap bitmap) {
+                bild.setImageBitmap(bitmap);
+            }
+        }, i, serviceConnection, 2);
     }
 
     @Override
