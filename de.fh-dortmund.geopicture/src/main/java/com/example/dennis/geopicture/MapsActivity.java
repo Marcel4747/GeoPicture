@@ -42,11 +42,14 @@ public class MapsActivity extends FragmentActivity {
         setUpMapIfNeeded();
 
 
-        for(int i=0;i<Checkpoint.checkpoints.size();i++){
-            Log.d("Name",  Checkpoint.checkpoints.get( i).getName());
-            Log.d("Discription", Checkpoint.checkpoints.get(i).getDescription());
-            Log.d("Lat",""+ Checkpoint.checkpoints.get(i).getPosition().latitude);
-            Log.d("Lon",""+ Checkpoint.checkpoints.get(i).getPosition().longitude);
+        for (int i = 0; i < Checkpoint.checkpoints.size(); i++) {
+            Checkpoint c=Checkpoint.checkpoints.get(i);
+            mMap.addMarker(new MarkerOptions()
+                .position(c.getPosition())
+                .title("checkpoint "+i)
+                .snippet(i+". Position"));
+            if (i < 10)
+                c.loadImage();
         }
 
 //        checkpoints.add(new Checkpoint(new LatLng(51.514568, 7.465091)));
@@ -127,7 +130,9 @@ public class MapsActivity extends FragmentActivity {
         showImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getApplicationContext(), ImageActivity.class);
+                intent.putExtra("imageNumber", checkpointNumber);
+                startActivity(intent);
             }
         });
 

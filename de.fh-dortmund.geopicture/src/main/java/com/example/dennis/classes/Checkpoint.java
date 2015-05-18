@@ -61,6 +61,8 @@ public class Checkpoint implements Serializable {
     }
 
     public Bitmap getImage() {
+        if(image==null)
+            loadImage();
         return image;
     }
 

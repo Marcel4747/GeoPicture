@@ -1,9 +1,15 @@
 package com.example.dennis.geopicture;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+
+import com.example.dennis.classes.Checkpoint;
 
 
 public class ImageActivity extends Activity {
@@ -12,6 +18,15 @@ public class ImageActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
+
+        Intent intent = getIntent();
+        int imageNumber = intent.getIntExtra("imageNumber", 0);
+        ImageView imageView = (ImageView) findViewById(R.id.imageView2);
+        if (Checkpoint.checkpoints.size() > imageNumber) {
+            Log.d("image", Checkpoint.checkpoints.get(imageNumber).getImage().toString());
+            Bitmap image = Checkpoint.checkpoints.get(imageNumber).getImage();
+            imageView.setImageBitmap(image);
+        }
     }
 
 
