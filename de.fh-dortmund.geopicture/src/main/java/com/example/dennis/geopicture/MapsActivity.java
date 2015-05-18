@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.dennis.classes.Checkpoint;
+import com.google.android.gms.location.LocationStatusCodes;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,8 +31,8 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private List<Checkpoint> checkpoints;
     private List<Marker> marker;
+    private List<LatLng> way;
     private int checkpointNumber;
 
     @Override
@@ -40,10 +41,20 @@ public class MapsActivity extends FragmentActivity {
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
 
-        checkpoints = new ArrayList<Checkpoint>();
-        checkpoints.add(new Checkpoint(new LatLng(51.514568, 7.465091)));
+
+        for(int i=0;i<Checkpoint.checkpoints.size();i++){
+            Log.d("Name",  Checkpoint.checkpoints.get( i).getName());
+            Log.d("Discription", Checkpoint.checkpoints.get(i).getDescription());
+            Log.d("Lat",""+ Checkpoint.checkpoints.get(i).getPosition().latitude);
+            Log.d("Lon",""+ Checkpoint.checkpoints.get(i).getPosition().longitude);
+        }
+
+//        checkpoints.add(new Checkpoint(new LatLng(51.514568, 7.465091)));
+//        checkpoints.add(new Checkpoint(new LatLng(51.514758, 7.467934)));
+//        checkpoints.add(new Checkpoint(new LatLng(51.510742, 7.464630)));
         checkpointNumber = 0;
-        marker=new ArrayList<Marker>();
+        marker = new ArrayList<Marker>();
+        way = new ArrayList<LatLng>();
 
 //        LatLng point1 = new LatLng(51.514568, 7.465091);
 //        Marker pos1 = mMap.addMarker(new MarkerOptions()
@@ -68,24 +79,30 @@ public class MapsActivity extends FragmentActivity {
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
 
-                LatLng target = checkpoints.get(checkpointNumber).getPosition();
+                LatLng target = Checkpoint.checkpoints.get(checkpointNumber).getPosition();
                 LatLng pos = new LatLng(location.getLatitude(), location.getLongitude());
                 float[] results = new float[3];
-
+                if (way.size() > 0) {
+                    mMap.addPolyline(new PolylineOptions()
+                            .add(way.get(way.size() - 1), pos)
+                            .width(5)
+                            .color(Color.RED));
+                }
+                way.add(pos);
                 Location.distanceBetween(target.latitude, target.longitude, pos.latitude, pos.longitude, results);
 
                 if (results[0] <= 50) {
                     //Checkpoint checked!
                     marker.add(mMap.addMarker(new MarkerOptions()
                             .position(target)
-                            .title("Checkpoint " + (checkpointNumber+1))
+                            .title("Checkpoint " + (checkpointNumber + 1))
                             .snippet("blablabalbalbala")));
-                    if (marker.size() > 1) {
-                        Polyline line = mMap.addPolyline(new PolylineOptions()
-                                .add(marker.get(marker.size()-2).getPosition(), marker.get(marker.size()-1).getPosition())
-                                .width(5)
-                                .color(Color.RED));
-                    }
+//                    if (marker.size() > 1) {
+//                        Polyline line = mMap.addPolyline(new PolylineOptions()
+//                                .add(marker.get(marker.size()-2).getPosition(), marker.get(marker.size()-1).getPosition())
+//                                .width(5)
+//                                .color(Color.RED));
+//                    }
                     checkpointNumber++;
                 }
 
@@ -96,6 +113,7 @@ public class MapsActivity extends FragmentActivity {
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
+
             }
 
             public void onProviderEnabled(String provider) {
