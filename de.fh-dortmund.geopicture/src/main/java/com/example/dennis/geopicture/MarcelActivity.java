@@ -9,7 +9,6 @@ import android.widget.ImageView;
 
 import de.do1900.android.utils.BitmapCache;
 import de.do1900.android.utils.ImageReceiver;
-import de.do1900.android.views.ImageReceivingView;
 import de.do1900.persistence.data.ImageInformation;
 import de.do1900.persistence.data.Location;
 import de.do1900.rest.service.APIServiceConnection;
@@ -64,7 +63,7 @@ public class MarcelActivity extends Activity implements ServiceStateInterface, S
         Location[] lo = (Location[]) o2;
 
         for (Location item : lo) {
-            Log.d("Test:", item.getName());
+            Log.d("Test:", item.getName() + " " + item.getLatitude() + " " + item.getLongitude());
         }
 
         ImageInformation i = lo[0].getImageInformation().get(0);

@@ -1,31 +1,24 @@
 package com.example.dennis.geopicture;
 
+import android.app.Activity;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.SeekBar;
 
 import com.example.dennis.classes.Checkpoint;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.do1900.android.utils.BitmapCache;
-import de.do1900.android.utils.ImageReceiver;
-import de.do1900.persistence.data.ImageInformation;
 import de.do1900.rest.service.APIServiceConnection;
 import de.do1900.rest.service.ServiceResponseInterface;
 import de.do1900.rest.service.ServiceStateInterface;
@@ -34,9 +27,12 @@ import de.do1900.rest.service.ServiceStateInterface;
 public class MenuActivity extends Activity implements ServiceStateInterface, ServiceResponseInterface {
 
     private Button buttonMap;
+    private SeekBar seekBar;
     private List<Checkpoint> checkpoints;
     private APIServiceConnection serviceConnection = new APIServiceConnection(
             this);
+
+    private LatLng position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,44 +40,19 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
         setContentView(R.layout.activity_menu);
         checkpoints = new ArrayList<Checkpoint>();
 
-        buttonMap = (Button) findViewById(R.id.buttonStartMap);
-        buttonMap.setEnabled(false);
-        buttonMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        // Positions bestimmung
+        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-                startActivity(intent);
-            }
-        });
-
-        Button buttonDennis = (Button) findViewById(R.id.buttonStartDennis);
-        buttonDennis.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), DennisActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        Button buttonMarcel = (Button) findViewById(R.id.buttonStartMarcel);
-        buttonMarcel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MarcelActivity.class);
-                startActivity(intent);
-            }
-        });
-
+        // Define a listener that responds to location updates
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
-                LatLng pos = new LatLng(location.getLatitude(), location.getLongitude());
+                position = new LatLng(location.getLatitude(), location.getLongitude());
 
+                Log.d("Change ","");
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
-
             }
 
             public void onProviderEnabled(String provider) {
@@ -90,6 +61,36 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
             public void onProviderDisabled(String provider) {
             }
         };
+
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+        //SeekBar holen
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        int distanceValue = (seekBar.getProgress()+ 1) * 500;
+
+        // Button Definieren
+        buttonMap = (Button) findViewById(R.id.buttonStartMap);
+        buttonMap.setEnabled(false);
+        buttonMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                // Filterung nach Distance
+                int distanceValue = ((SeekBar) findViewById(R.id.seekBar)).getProgress() + 1;
+
+                float[] results = new float[3];
+
+                for (Checkpoint item : checkpoints) {
+                    Location.distanceBetween(position.latitude, position.longitude, item.getPosition().latitude, item.getPosition().longitude, results);
+                    if (results[0] > distanceValue) {
+
+                        Checkpoint.checkpoints.add(item);
+                    }
+                }
+
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -117,14 +118,13 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
 
     @Override
     public void handleServiceResponse(Object o, Object o2) {
-
-        Log.d("Test:", o.toString() + "    " + o2.getClass().toString());
         de.do1900.persistence.data.Location[] lo = (de.do1900.persistence.data.Location[]) o2;
 
         for (de.do1900.persistence.data.Location item : lo) {
-            Log.d("Test:", item.getName());
-            Checkpoint.checkpoints.add(new Checkpoint(item, this, this));
+            checkpoints.add(new Checkpoint(item, this, this));
         }
+
+
         buttonMap.setEnabled(true);
     }
 

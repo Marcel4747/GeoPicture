@@ -11,15 +11,20 @@
         android:text="@string/MapButton"
         android:id="@+id/buttonStartMap" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/DennisButton"
-        android:id="@+id/buttonStartDennis" />
 
-    <Button
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Entfernung"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal" />
+
+    <SeekBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/MarcelButton"
-        android:id="@+id/buttonStartMarcel" />
+        android:id="@+id/seekBar"
+        android:layout_gravity="center_horizontal"
+        android:max="19" />
+
 </LinearLayout>
