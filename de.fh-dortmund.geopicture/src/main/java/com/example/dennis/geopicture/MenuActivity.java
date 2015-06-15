@@ -129,7 +129,7 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
                     float[] results = new float[3];
                     int i = 0;
                     for (Checkpoint item : checkpoints) {
-                        if (item != null && item.getPosition() != null) {
+                        if (item != null && item.getPosition() != null && item.hasImages()) {
                             Location.distanceBetween(position.latitude, position.longitude, item.getPosition().latitude, item.getPosition().longitude, results);
 
                             if (results[0] <= distanceValue && i < countValue) {

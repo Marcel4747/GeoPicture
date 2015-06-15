@@ -2,7 +2,7 @@ package com.example.dennis.classes;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.Image;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -47,6 +47,7 @@ public class Checkpoint implements Serializable {
             if (item.getImageInformation().size() > 0) {
                 APIServiceConnection serviceConnection = new APIServiceConnection(
                         ssi);
+                Log.d("SSSSSSS", "" + item.getImageInformation().size());
                 ImageInformation i = item.getImageInformation().get(0);
                 BitmapCache bitmapCache = BitmapCache.instance(context);
                 bitmapCache.setImage(new ImageReceiver() {
@@ -60,8 +61,12 @@ public class Checkpoint implements Serializable {
         }
     }
 
+    public boolean hasImages() {
+        return item.getImageInformation().size() > 0;
+    }
+
     public Bitmap getImage() {
-        if(image==null)
+        if (image == null)
             loadImage();
         return image;
     }
