@@ -2,23 +2,19 @@ package com.example.dennis.geopicture;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dennis.classes.Checkpoint;
 import com.google.android.gms.maps.model.LatLng;
@@ -37,6 +33,10 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
     private SeekBar seekBarDistance;
     private SeekBar seekBarCount;
     private List<Checkpoint> checkpoints;
+
+    private TextView textView_Entfernung;
+    private TextView textView_Anzahl;
+
     private APIServiceConnection serviceConnection = new APIServiceConnection(
             this);
 
@@ -56,8 +56,7 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
                 position = new LatLng(location.getLatitude(), location.getLongitude());
-
-                Log.d("Change ", "");
+                Toast.makeText(getBaseContext(), "Positionsdaten gefunden!.", Toast.LENGTH_LONG).show();
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -72,11 +71,47 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
 
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
+        textView_Entfernung = (TextView) findViewById(R.id.textView_Entfernung);
+        textView_Anzahl = (TextView) findViewById(R.id.textView_Anzahl);
+
         //seekBarDistance holen
         seekBarDistance = (SeekBar) findViewById(R.id.seekBarDistance);
+        seekBarDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textView_Entfernung.setText("Entfernung: " + ((progress + 1) * 500) + "m");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         //seekBarCount holen
         seekBarCount = (SeekBar) findViewById(R.id.seekBarCount);
+        seekBarCount.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textView_Anzahl.setText("Anzahl von Bildern: " + (progress + 2));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
 
         // Button Definieren
         buttonMap = (Button) findViewById(R.id.buttonStartMap);
@@ -91,9 +126,6 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
                     int distanceValue = (seekBarDistance.getProgress() + 1) * 500;
                     int countValue = seekBarCount.getProgress() + 2;
 
-                    Log.d("G:", "" + distanceValue);
-                    Log.d("G:", "" + countValue);
-
                     float[] results = new float[3];
                     int i = 0;
                     for (Checkpoint item : checkpoints) {
@@ -107,10 +139,11 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
                                 break;
                             }
                         }
-
                     }
 
                     startActivity(intent);
+                } else {
+                    Toast.makeText(getBaseContext(), "Keine Positionsdaten geunden.", Toast.LENGTH_LONG).show();
                 }
             }
         });

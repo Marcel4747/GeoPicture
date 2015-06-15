@@ -16,8 +16,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Entfernung"
-        android:id="@+id/textView"
+        android:text="Entfernung: 500m"
+        android:id="@+id/textView_Entfernung"
         android:layout_gravity="center_horizontal" />
 
     <SeekBar
@@ -31,8 +31,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Anzahl von Bildern"
-        android:id="@+id/textView2"
+        android:text="Anzahl von Bildern: 2"
+        android:id="@+id/textView_Anzahl"
         android:layout_gravity="center_horizontal" />
 
     <SeekBar
