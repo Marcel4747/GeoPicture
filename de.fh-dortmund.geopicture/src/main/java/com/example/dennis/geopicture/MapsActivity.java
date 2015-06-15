@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.dennis.classes.Checkpoint;
 import com.google.android.gms.location.LocationStatusCodes;
@@ -43,11 +44,13 @@ public class MapsActivity extends FragmentActivity {
 
 
         for (int i = 0; i < Checkpoint.checkpoints.size(); i++) {
-            Checkpoint c=Checkpoint.checkpoints.get(i);
-            mMap.addMarker(new MarkerOptions()
-                .position(c.getPosition())
-                .title("checkpoint "+i)
-                .snippet(i+". Position"));
+            Checkpoint c = Checkpoint.checkpoints.get(i);
+            Log.d("Checkpoint"+i+" Lon", c.getPosition().longitude+"");
+            Log.d("Checkpoint"+i+" Lat", c.getPosition().latitude+"");
+//            mMap.addMarker(new MarkerOptions()
+//                    .position(c.getPosition())
+//                    .title(c.getName())
+//                    .snippet("Checkpoint " + i));
             if (i < 10)
                 c.loadImage();
         }
@@ -82,7 +85,8 @@ public class MapsActivity extends FragmentActivity {
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
 
-                LatLng target = Checkpoint.checkpoints.get(checkpointNumber).getPosition();
+                Checkpoint cp = Checkpoint.checkpoints.get(checkpointNumber);
+                LatLng target = cp.getPosition();
                 LatLng pos = new LatLng(location.getLatitude(), location.getLongitude());
                 float[] results = new float[3];
                 if (way.size() > 0) {
@@ -96,10 +100,11 @@ public class MapsActivity extends FragmentActivity {
 
                 if (results[0] <= 50) {
                     //Checkpoint checked!
+                    Toast.makeText(getBaseContext(), "Checkpoint erreicht!!!", Toast.LENGTH_LONG).show();
                     marker.add(mMap.addMarker(new MarkerOptions()
                             .position(target)
-                            .title("Checkpoint " + (checkpointNumber + 1))
-                            .snippet("blablabalbalbala")));
+                            .title(cp.getName())
+                            .snippet("Checkpoint " + (checkpointNumber + 1))));
 //                    if (marker.size() > 1) {
 //                        Polyline line = mMap.addPolyline(new PolylineOptions()
 //                                .add(marker.get(marker.size()-2).getPosition(), marker.get(marker.size()-1).getPosition())
@@ -107,6 +112,11 @@ public class MapsActivity extends FragmentActivity {
 //                                .color(Color.RED));
 //                    }
                     checkpointNumber++;
+
+                    Intent intent = new Intent(getApplicationContext(), ImageActivity.class);
+                    intent.putExtra("imageNumber", checkpointNumber);
+                    startActivity(intent);
+
                 }
 
 //                mMap.addMarker(new MarkerOptions()
@@ -133,6 +143,20 @@ public class MapsActivity extends FragmentActivity {
                 Intent intent = new Intent(getApplicationContext(), ImageActivity.class);
                 intent.putExtra("imageNumber", checkpointNumber);
                 startActivity(intent);
+            }
+        });
+
+        Button showHint = (Button) findViewById(R.id.button1);
+        showHint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Location pos=mMap.getMyLocation();
+                Checkpoint cp = Checkpoint.checkpoints.get(checkpointNumber);
+
+                LatLng target = cp.getPosition();
+                float[] results = new float[3];
+                Location.distanceBetween(target.latitude, target.longitude, pos.getLatitude(), pos.getLongitude(), results);
+                Toast.makeText(getBaseContext(), "Entfernung nach \"" + cp.getName() +"\": "+(int)results[0]+"m", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -192,6 +216,7 @@ public class MapsActivity extends FragmentActivity {
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
+        mMap.setMyLocationEnabled(true);
 
     }
 }

@@ -56,7 +56,7 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
                 position = new LatLng(location.getLatitude(), location.getLongitude());
-                Toast.makeText(getBaseContext(), "Positionsdaten gefunden!.", Toast.LENGTH_LONG).show();
+
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -177,7 +177,7 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
         de.do1900.persistence.data.Location[] lo = (de.do1900.persistence.data.Location[]) o2;
 
         for (de.do1900.persistence.data.Location item : lo) {
-            checkpoints.add(new Checkpoint(item, this, this));
+            checkpoints.add(new Checkpoint(item, this, serviceConnection));
         }
 
 

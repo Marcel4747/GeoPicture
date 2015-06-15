@@ -28,12 +28,12 @@ public class Checkpoint implements Serializable {
 
     private de.do1900.persistence.data.Location item;
     private Context context;
-    private ServiceStateInterface ssi;
+    private APIServiceConnection apiSc;
 
-    public Checkpoint(de.do1900.persistence.data.Location item, Context context, ServiceStateInterface ssi) {
+    public Checkpoint(de.do1900.persistence.data.Location item, Context context, APIServiceConnection apiSc) {
         this.item = item;
         this.context = context;
-        this.ssi = ssi;
+        this.apiSc = apiSc;
     }
 
     public LatLng getPosition() {
@@ -45,8 +45,7 @@ public class Checkpoint implements Serializable {
     public void loadImage() {
         if (image == null) {
             if (item.getImageInformation().size() > 0) {
-                APIServiceConnection serviceConnection = new APIServiceConnection(
-                        ssi);
+
                 Log.d("SSSSSSS", "" + item.getImageInformation().size());
                 ImageInformation i = item.getImageInformation().get(0);
                 BitmapCache bitmapCache = BitmapCache.instance(context);
@@ -56,7 +55,7 @@ public class Checkpoint implements Serializable {
 //                      bild.setImageBitmap(bitmap);
                         image = bitmap;
                     }
-                }, i, serviceConnection, 2);
+                }, i, apiSc, 2);
             }
         }
     }
