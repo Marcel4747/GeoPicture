@@ -9,6 +9,7 @@ import android.media.Image;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,6 +30,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.v4.app.ActivityCompat.startActivity;
+
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -42,7 +45,7 @@ public class MapsActivity extends FragmentActivity {
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
 
-
+        Log.d("CheckpointSize", Checkpoint.checkpoints.size()+"");
         for (int i = 0; i < Checkpoint.checkpoints.size(); i++) {
             Checkpoint c = Checkpoint.checkpoints.get(i);
             Log.d("Checkpoint"+i+" Lon", c.getPosition().longitude+"");
@@ -85,40 +88,47 @@ public class MapsActivity extends FragmentActivity {
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
 
-                Checkpoint cp = Checkpoint.checkpoints.get(checkpointNumber);
-                LatLng target = cp.getPosition();
-                LatLng pos = new LatLng(location.getLatitude(), location.getLongitude());
-                float[] results = new float[3];
-                if (way.size() > 0) {
-                    mMap.addPolyline(new PolylineOptions()
-                            .add(way.get(way.size() - 1), pos)
-                            .width(5)
-                            .color(Color.RED));
-                }
-                way.add(pos);
-                Location.distanceBetween(target.latitude, target.longitude, pos.latitude, pos.longitude, results);
+                if(Checkpoint.checkpoints.size()>checkpointNumber) {
+                    Checkpoint cp = Checkpoint.checkpoints.get(checkpointNumber);
+                    LatLng target = cp.getPosition();
+                    LatLng pos = new LatLng(location.getLatitude(), location.getLongitude());
+                    float[] results = new float[3];
+                    if (way.size() > 0) {
+                        mMap.addPolyline(new PolylineOptions()
+                                .add(way.get(way.size() - 1), pos)
+                                .width(5)
+                                .color(Color.RED));
+                    }
+                    way.add(pos);
+                    Location.distanceBetween(target.latitude, target.longitude, pos.latitude, pos.longitude, results);
 
-                if (results[0] <= 50) {
-                    //Checkpoint checked!
-                    Toast.makeText(getBaseContext(), "Checkpoint erreicht!!!", Toast.LENGTH_LONG).show();
-                    marker.add(mMap.addMarker(new MarkerOptions()
-                            .position(target)
-                            .title(cp.getName())
-                            .snippet("Checkpoint " + (checkpointNumber + 1))));
+                    if (results[0] <= 50) {
+                        //Checkpoint checked!
+
+                        marker.add(mMap.addMarker(new MarkerOptions()
+                                .position(target)
+                                .title(cp.getName())
+                                .snippet("Checkpoint " + (checkpointNumber + 1))));
 //                    if (marker.size() > 1) {
 //                        Polyline line = mMap.addPolyline(new PolylineOptions()
 //                                .add(marker.get(marker.size()-2).getPosition(), marker.get(marker.size()-1).getPosition())
 //                                .width(5)
 //                                .color(Color.RED));
 //                    }
-                    checkpointNumber++;
+                        checkpointNumber++;
 
-                    Intent intent = new Intent(getApplicationContext(), ImageActivity.class);
-                    intent.putExtra("imageNumber", checkpointNumber);
-                    startActivity(intent);
-
+                        if (Checkpoint.checkpoints.size() <= checkpointNumber) {
+                            Toast.makeText(getBaseContext(), "Schnitzeljagt erfolgreich beendet", Toast.LENGTH_LONG).show();
+                            ((Button) findViewById(R.id.button)).setEnabled(false);
+                            ((Button) findViewById(R.id.button1)).setEnabled(false);
+                        } else {
+                            Toast.makeText(getBaseContext(), "Checkpoint erreicht!!!", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(getApplicationContext(), ImageActivity.class);
+                            intent.putExtra("imageNumber", checkpointNumber);
+                            startActivity(intent);
+                        }
+                    }
                 }
-
 //                mMap.addMarker(new MarkerOptions()
 //                        .position(p)
 //                        .title("neuer Marker")
@@ -140,6 +150,7 @@ public class MapsActivity extends FragmentActivity {
         showImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(getApplicationContext(), ImageActivity.class);
                 intent.putExtra("imageNumber", checkpointNumber);
                 startActivity(intent);
@@ -154,9 +165,15 @@ public class MapsActivity extends FragmentActivity {
                 Checkpoint cp = Checkpoint.checkpoints.get(checkpointNumber);
 
                 LatLng target = cp.getPosition();
+                if(target==null || pos==null)
+                {
+                    Toast.makeText(getBaseContext(), "Keine Positionsdaten gefunden", Toast.LENGTH_LONG).show();
+                }
+                else{
                 float[] results = new float[3];
                 Location.distanceBetween(target.latitude, target.longitude, pos.getLatitude(), pos.getLongitude(), results);
                 Toast.makeText(getBaseContext(), "Entfernung nach \"" + cp.getName() +"\": "+(int)results[0]+"m", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -218,5 +235,15 @@ public class MapsActivity extends FragmentActivity {
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.setMyLocationEnabled(true);
 
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            marker.clear();
+            mMap.clear();
+            Checkpoint.checkpoints.clear();
+            checkpointNumber=0;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

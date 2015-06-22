@@ -10,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -128,6 +129,7 @@ public class MenuActivity extends Activity implements ServiceStateInterface, Ser
 
                     float[] results = new float[3];
                     int i = 0;
+                    Log.d("cSize", checkpoints.size() + "");
                     for (Checkpoint item : checkpoints) {
                         if (item != null && item.getPosition() != null && item.hasImages()) {
                             Location.distanceBetween(position.latitude, position.longitude, item.getPosition().latitude, item.getPosition().longitude, results);
